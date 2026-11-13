@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bazi (八字) Chart</title>
+<style>
+  :root { --bg:#faf6ef; --ink:#2b2118; --muted:#7a6a5a; --card:#fff; --line:#e4d9c8; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px 16px; background:var(--bg); color:var(--ink);
+         font-family:system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:560px; margin:0 auto; }
+  h1 { font-size:1.4rem; margin:0 0 4px; }
+  p.sub { margin:0 0 20px; color:var(--muted); font-size:.9rem; }
+  form { display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-bottom:20px; }
+  label { display:flex; flex-direction:column; font-size:.8rem; color:var(--muted); gap:4px; }
+  input, select, button { font:inherit; padding:8px 10px; border:1px solid var(--line);
+         border-radius:8px; background:var(--card); color:var(--ink); }
+  button { background:var(--ink); color:#fff; border-color:var(--ink); cursor:pointer; }
+  .pillars { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .pillar { background:var(--card); border:1px solid var(--line); border-radius:12px;
+            padding:12px 4px; text-align:center; }
+  .pillar h2 { margin:0 0 8px; font-size:.75rem; font-weight:600; color:var(--muted);
+               text-transform:uppercase; letter-spacing:.05em; }
+  .ch { font-size:2rem; line-height:1.15; }
+  .py { font-size:.7rem; color:var(--muted); margin-bottom:6px; }
+  .el { font-size:.75rem; }
+  .wood{color:#2e7d32} .fire{color:#d84315} .earth{color:#8d6e1f} .metal{color:#607d8b} .water{color:#1565c0}
+  .dm { outline:2px solid var(--ink); }
+  .bars { margin-top:20px; background:var(--card); border:1px solid var(--line);
+          border-radius:12px; padding:14px; }
+  .bars h3 { margin:0 0 10px; font-size:.9rem; }
+  .bar { display:flex; align-items:center; gap:8px; margin:6px 0; font-size:.85rem; }
+  .bar span.n { width:60px; }
+  .bar i { display:block; height:10px; border-radius:5px; background:currentColor; }
+  .note { margin-top:16px; font-size:.75rem; color:var(--muted); line-height:1.5; }
+</style>
+</head>
+<body>
+<main>
+  <h1>八字 Bazi Chart</h1>
+  <p class="sub">Four Pillars of Destiny — year, month, day and (optional) hour.</p>
+
+  <form id="f">
+    <label>Birth date <input type="date" id="date" value="1989-03-09" required></label>
+    <label>Birth time (optional) <input type="time" id="time"></label>
+    <button type="submit">Calculate</button>
+  </form>
+
+  <div class="pillars" id="pillars"></div>
+  <div class="bars" id="bars"></div>
+
+  <p class="note">
+    Day Master (日主) is outlined. Month pillar uses approximate solar-term dates
+    (jie qi, e.g. Li Chun ≈ 4 Feb, Jing Zhe ≈ 6 Mar), so dates within a day of a
+    boundary may differ from a precise almanac. Use local clock time; no
+    true-solar-time or DST adjustment. For entertainment only.
+  </p>
+</main>
+
+<script>
+const STEMS   = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const STEM_PY = ['Jiǎ','Yǐ','Bǐng','Dīng','Wù','Jǐ','Gēng','Xīn','Rén','Guǐ'];
+const STEM_EL = ['wood','wood','fire','fire','earth','earth','metal','metal','water','water'];
+const BRANCH  = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const BR_PY   = ['Zǐ','Chǒu','Yín','Mǎo','Chén','Sì','Wǔ','Wèi','Shēn','Yǒu','Xū','Hài'];
+const BR_ANI  = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
+const BR_EL   = ['water','earth','wood','wood','earth','fire','fire','earth','metal','metal','earth','water'];
+const ELS     = ['wood','fire','earth','metal','water'];
+const ELNAME  = {wood:'Wood 木',fire:'Fire 火',earth:'Earth 土',metal:'Metal 金',water:'Water 水'};
+
+// Approximate start (month, day) of each solar-term month, beginning with Yin (寅) month.
+const JIE = [[2,4],[3,6],[4,5],[5,6],[6,6],[7,7],[8,8],[9,8],[10,8],[11,7],[12,7],[1,6]];
+
+function pillars(y, m, d, hour) {
+  // Year (changes at Li Chun, ~4 Feb)
+  let by = y;
+  if (m < 2 || (m === 2 && d < 4)) by -= 1;
+  const yi = (by - 4) % 60;
+  const yS = yi % 10, yB = yi % 12;
+
+  // Month index n: 0 = Yin month (from Li Chun) ... 11 = Chou month.
+  // Compare (month, day) against each jie start; Jan 1-5 still belongs to Zi month (n=10).
+  const key = m * 100 + d;
+  let n;
+  if (key < 106) n = 10;
+  else if (key < 204) n = 11;
+  else {
+    n = 0;
+    for (let i = 0; i < 11; i++) if (key >= JIE[i][0] * 100 + JIE[i][1]) n = i;
+  }
+  const mS = ((yS % 5) * 2 + 2 + n) % 10;
+  const mB = (2 + n) % 12;
+
+  // Day: days since 1949-10-01 (a Jia-Zi day)
+  const days = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(1949, 9, 1)) / 86400000);
+  const di = ((days % 60) + 60) % 60;
+  const dS = di % 10, dB = di % 12;
+
+  const out = [
+    { label:'Year',  s:yS, b:yB },
+    { label:'Month', s:mS, b:mB },
+    { label:'Day',   s:dS, b:dB, dm:true },
+  ];
+  if (hour !== null) {
+    const hB = Math.floor((hour + 1) / 2) % 12;
+    const hS = ((dS % 5) * 2 + hB) % 10;
+    out.push({ label:'Hour', s:hS, b:hB });
+  } else {
+    out.push({ label:'Hour', s:null, b:null });
+  }
+  return out;
+}
+
+function render() {
+  const [y, m, d] = document.getElementById('date').value.split('-').map(Number);
+  const t = document.getElementById('time').value;
+  const hour = t ? Number(t.split(':')[0]) : null;
+  const ps = pillars(y, m, d, hour);
+
+  document.getElementById('pillars').innerHTML = ps.map(p => {
+    if (p.s === null) return `<div class="pillar"><h2>${p.label}</h2><div class="ch">—</div><div class="py">unknown</div></div>`;
+    return `<div class="pillar${p.dm ? ' dm' : ''}">
+      <h2>${p.label}</h2>
+      <div class="ch ${STEM_EL[p.s]}">${STEMS[p.s]}</div>
+      <div class="py">${STEM_PY[p.s]}</div>
+      <div class="ch ${BR_EL[p.b]}">${BRANCH[p.b]}</div>
+      <div class="py">${BR_PY[p.b]} · ${BR_ANI[p.b]}</div>
+      <div class="el ${STEM_EL[p.s]}">${ELNAME[STEM_EL[p.s]]}</div>
+    </div>`;
+  }).join('');
+
+  const count = { wood:0, fire:0, earth:0, metal:0, water:0 };
+  ps.forEach(p => { if (p.s !== null) { count[STEM_EL[p.s]]++; count[BR_EL[p.b]]++; } });
+  const max = Math.max(...Object.values(count), 1);
+  document.getElementById('bars').innerHTML = '<h3>Five Elements (stems + branches)</h3>' +
+    ELS.map(e => `<div class="bar ${e}"><span class="n">${ELNAME[e].split(' ')[0]}</span>
+      <i style="width:${count[e] / max * 60}%"></i><span>${count[e]}</span></div>`).join('');
+}
+
+document.getElementById('f').addEventListener('submit', e => { e.preventDefault(); render(); });
+render();
+</script>
+</body>
+</html>
