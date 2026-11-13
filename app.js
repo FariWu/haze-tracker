@@ -5,6 +5,8 @@ const REFRESH_MS = 5 * 60 * 1000;
 const CACHE_KEY = 'haze-last-data';
 
 let latest = null;
+let selected = 'central';
+let mapMetric = 'psi24';
 let settings = { region: 'central', metric: 'psi24', threshold: 100, enabled: true };
 
 /* ---------- formatting ---------- */
@@ -36,21 +38,46 @@ function statHtml(label, value, extra) {
 
 /* ---------- rendering ---------- */
 
+function renderMap(data) {
+  for (const r of REGIONS) {
+    const v = data.regions[r][mapMetric];
+    const band = bandFor(v);
+    const path = document.querySelector('.map-region[data-region="' + r + '"]');
+    const label = document.querySelector('.map-label[data-label="' + r + '"]');
+    if (path) {
+      path.style.fill = band.color;
+      path.classList.toggle('selected', r === selected);
+      if (r === selected && path.parentNode.lastElementChild !== path) {
+        // Raise the selected region so its outline is not hidden by its neighbours.
+        const hadFocus = document.activeElement === path;
+        path.parentNode.appendChild(path);
+        if (hadFocus) path.focus();
+      }
+      path.setAttribute('aria-pressed', r === selected ? 'true' : 'false');
+      path.setAttribute('aria-label', cap(r) + ': ' + (v == null ? 'no data' : v + ', ' + band.label));
+    }
+    if (label) {
+      label.style.fill = band.textColor;
+      label.querySelector('.map-val').textContent = v == null ? '–' : v;
+    }
+  }
+}
+
+function renderDetail(data) {
+  const d = data.regions[selected];
+  const watching = settings.enabled && settings.region === selected;
+  $('detail').innerHTML =
+    '<h3>' + cap(selected) + (watching ? ' <span class="tag">alert set</span>' : '') + '</h3>' +
+    '<div class="stats">' +
+    statHtml('24-hour PSI', d.psi24) +
+    statHtml('1-hour PSI (est.)', d.psi1, d.pm25 == null ? '' : 'PM2.5 ' + d.pm25 + ' µg/m³') +
+    '</div>' +
+    '<button type="button" id="set-alert" class="ghost">Set alert for ' + cap(selected) + '</button>';
+}
+
 function render(data, stale) {
-  const wrap = $('regions');
-  wrap.innerHTML = REGIONS.map((r) => {
-    const d = data.regions[r];
-    const band = bandFor(d.psi24 != null ? d.psi24 : d.psi1);
-    const watching = settings.enabled && settings.region === r ? ' watching' : '';
-    return (
-      '<article class="card' + watching + '" style="--c:' + band.color + '">' +
-      '<h3>' + cap(r) + (watching ? ' · alert set' : '') + '</h3>' +
-      '<div class="stats">' +
-      statHtml('24-hour PSI', d.psi24) +
-      statHtml('1-hour PSI (est.)', d.psi1, d.pm25 == null ? '' : 'PM2.5 ' + d.pm25 + ' µg/m³') +
-      '</div></article>'
-    );
-  }).join('');
+  renderMap(data);
+  renderDetail(data);
 
   const t24 = fmtTime(data.psiTime);
   const t1 = fmtTime(data.pm25Time);
@@ -100,7 +127,6 @@ async function loadData(manual) {
       render(cached, true);
       showBanner('Could not update just now, showing the last saved readings.');
     } else {
-      $('regions').innerHTML = '';
       $('updated').textContent = 'No data';
       showBanner('Could not load PSI data (' + err.message + '). Check your connection and try again.');
     }
@@ -257,6 +283,36 @@ async function init() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
+  $('map').innerHTML = mapSvgMarkup();
+  const select = (region) => {
+    selected = region;
+    if (latest) render(latest, false);
+  };
+  $('map').addEventListener('click', (e) => {
+    const p = e.target.closest('.map-region');
+    if (p) select(p.dataset.region);
+  });
+  $('map').addEventListener('keydown', (e) => {
+    const p = e.target.closest && e.target.closest('.map-region');
+    if (p && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      select(p.dataset.region);
+    }
+  });
+  document.querySelectorAll('.seg button').forEach((b) => {
+    b.addEventListener('click', () => {
+      mapMetric = b.dataset.metric;
+      document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      if (latest) renderMap(latest);
+    });
+  });
+  $('detail').addEventListener('click', (e) => {
+    if (e.target.id === 'set-alert') {
+      $('region').value = selected;
+      $('alerts-h').scrollIntoView({ behavior: 'smooth' });
+      setStatus('Region set to ' + cap(selected) + '. Choose a threshold and tap Save alert.');
+    }
+  });
   $('settings').addEventListener('submit', onSave);
   $('test').addEventListener('click', onTest);
   $('refresh').addEventListener('click', () => loadData(true));

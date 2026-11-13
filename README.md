@@ -2,6 +2,7 @@
 
 A small installable web app (PWA) that shows Singapore's PSI by region and can alert you when it crosses a level you choose.
 
+- **Map view**: a simplified map of Singapore split into the five NEA regions, coloured by PSI band. Tap a region for details, and switch the map between the 24-hour and 1-hour readings. The map is stylised, not survey-accurate.
 - **24-hour PSI** per region (Central, North, South, East, West) from NEA's `psi` feed.
 - **1-hour PSI (estimated)**: NEA does not publish a 1-hour PSI, so it is derived from NEA's 1-hour PM2.5 reading (`pm25` feed) using the PSI PM2.5 breakpoints. It is shown with the raw PM2.5 value.
 - **Threshold alert**: pick a region, which reading to watch and a PSI level. You get one notification when it reaches that level, and the alert re-arms once it drops back below.
@@ -31,6 +32,7 @@ Alerts are not guaranteed while the app is closed, and iPhones only allow notifi
 ## Files
 
 - `index.html`, `styles.css`, `app.js`: the interface
+- `map.js`: the region map
 - `psi.js`: data fetching, PSI bands, estimate and alert logic (shared with the service worker)
 - `sw.js`: offline cache and background checks
 - `manifest.webmanifest`, `icons/`: install metadata and the app icon (`icons/icon.svg` is the source)

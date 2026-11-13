@@ -1,13 +1,14 @@
 /* Service worker: offline app shell + background threshold checks. */
 importScripts('psi.js');
 
-const CACHE = 'haze-tracker-v1';
+const CACHE = 'haze-tracker-v2';
 const SHELL = [
   './',
   'index.html',
   'styles.css',
   'app.js',
   'psi.js',
+  'map.js',
   'manifest.webmanifest',
   'icons/icon.svg',
   'icons/icon-192.png',

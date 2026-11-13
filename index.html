@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Haze Tracker SG</title>
   <meta name="description" content="Live 1-hour and 24-hour PSI for Singapore regions, with threshold alerts.">
-  <meta name="theme-color" content="#14263f">
+  <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Haze SG">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -31,8 +31,12 @@
     <p id="banner" class="banner" role="status" hidden></p>
 
     <section aria-labelledby="regions-h">
-      <h2 id="regions-h" class="section-title">Regions</h2>
-      <div id="regions" class="grid" aria-live="polite"></div>
+      <h2 id="regions-h" class="section-title">Singapore by region</h2>
+      <div class="seg" role="group" aria-label="Reading shown on the map">
+        <button type="button" data-metric="psi24" aria-pressed="true">24-hour PSI</button>
+        <button type="button" data-metric="psi1" aria-pressed="false">1-hour PSI (est.)</button>
+      </div>
+      <div id="map" class="map"></div>
       <p class="legend" aria-label="PSI bands">
         <span style="--c:#2e9e4f">0–50 Good</span>
         <span style="--c:#2f7fd1">51–100 Moderate</span>
@@ -40,6 +44,8 @@
         <span style="--c:#ef7d00">201–300 Very Unhealthy</span>
         <span style="--c:#c62828">301+ Hazardous</span>
       </p>
+      <p class="hint">Tap a region for details.</p>
+      <div id="detail" class="card" aria-live="polite"></div>
     </section>
 
     <section class="panel" aria-labelledby="alerts-h">
@@ -98,6 +104,7 @@
   </footer>
 
   <script src="psi.js"></script>
+  <script src="map.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
