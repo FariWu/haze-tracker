@@ -24,34 +24,86 @@
       background: rgba(255, 255, 255, 0.85);
       border-radius: 12px;
     }
-    svg { width: min(60vw, 320px); height: auto; }
+    svg { width: min(90vw, 560px); height: auto; }
+    .bob { animation: bob 3s ease-in-out infinite; }
+    .bob2 { animation: bob 2.2s ease-in-out infinite reverse; }
+    .flap { animation: flap 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes flap { from { transform: scaleX(1); } to { transform: scaleX(0.6); } }
   </style>
 </head>
 <body>
   <h1>Hello Singapore 🇸🇬</h1>
 
-  <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-label="A flower">
-    <!-- stem -->
-    <path d="M100 120 C95 170 105 210 100 255" stroke="#2e7d32" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <!-- leaves -->
-    <path d="M100 205 C70 195 55 175 50 160 C80 160 98 178 100 205Z" fill="#43a047"/>
-    <path d="M101 180 C130 172 146 152 150 138 C122 138 103 156 101 180Z" fill="#66bb6a"/>
-    <!-- petals -->
-    <g transform="translate(100 80)" fill="#ff80ab" stroke="#f06292" stroke-width="1.5">
-      <ellipse cx="0" cy="-34" rx="16" ry="30"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(45)"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(90)"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(135)"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(180)"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(225)"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(270)"/>
-      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(315)"/>
+  <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" aria-label="A flower with a butterfly, a bee, a ladybug and a bird">
+    <!-- grass -->
+    <path d="M0 250 Q100 235 200 248 T400 245 V260 H0Z" fill="#66bb6a"/>
+
+    <!-- flower -->
+    <g transform="translate(200 0)">
+      <path d="M0 120 C-5 170 5 210 0 250" stroke="#2e7d32" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M0 205 C-30 195 -45 175 -50 160 C-20 160 -2 178 0 205Z" fill="#43a047"/>
+      <path d="M1 180 C30 172 46 152 50 138 C22 138 3 156 1 180Z" fill="#66bb6a"/>
+      <g transform="translate(0 80)" fill="#ff80ab" stroke="#f06292" stroke-width="1.5">
+        <ellipse cx="0" cy="-34" rx="16" ry="30"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(315)"/>
+      </g>
+      <circle cx="0" cy="80" r="20" fill="#ffca28" stroke="#f9a825" stroke-width="2"/>
+      <circle cx="-6" cy="75" r="2.5" fill="#f9a825"/>
+      <circle cx="5" cy="78" r="2.5" fill="#f9a825"/>
+      <circle cx="-2" cy="87" r="2.5" fill="#f9a825"/>
     </g>
-    <!-- center -->
-    <circle cx="100" cy="80" r="20" fill="#ffca28" stroke="#f9a825" stroke-width="2"/>
-    <circle cx="94" cy="75" r="2.5" fill="#f9a825"/>
-    <circle cx="105" cy="78" r="2.5" fill="#f9a825"/>
-    <circle cx="98" cy="87" r="2.5" fill="#f9a825"/>
+
+    <!-- butterfly (left, flapping) -->
+    <g class="bob" transform="translate(70 70)">
+      <g class="flap">
+        <ellipse cx="-14" cy="-8" rx="16" ry="12" fill="#7e57c2" transform="rotate(-20 -14 -8)"/>
+        <ellipse cx="-11" cy="10" rx="11" ry="8" fill="#b39ddb" transform="rotate(15 -11 10)"/>
+        <ellipse cx="14" cy="-8" rx="16" ry="12" fill="#7e57c2" transform="rotate(20 14 -8)"/>
+        <ellipse cx="11" cy="10" rx="11" ry="8" fill="#b39ddb" transform="rotate(-15 11 10)"/>
+      </g>
+      <rect x="-2.5" y="-12" width="5" height="26" rx="2.5" fill="#37474f"/>
+      <path d="M-1 -12 Q-8 -24 -12 -22 M1 -12 Q8 -24 12 -22" stroke="#37474f" stroke-width="1.5" fill="none"/>
+    </g>
+
+    <!-- bee (right) -->
+    <g class="bob2" transform="translate(320 95)">
+      <ellipse cx="-4" cy="-12" rx="10" ry="6" fill="#e3f2fd" stroke="#90caf9" transform="rotate(-25 -4 -12)"/>
+      <ellipse cx="8" cy="-12" rx="10" ry="6" fill="#e3f2fd" stroke="#90caf9" transform="rotate(25 8 -12)"/>
+      <ellipse cx="0" cy="0" rx="18" ry="12" fill="#ffd54f"/>
+      <path d="M-6 -11 V11 M3 -12 V12" stroke="#37474f" stroke-width="5"/>
+      <circle cx="-16" cy="-2" r="7" fill="#37474f"/>
+      <circle cx="-18" cy="-4" r="1.6" fill="#fff"/>
+      <path d="M18 0 L25 0" stroke="#37474f" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- bird (top right) -->
+    <g class="bob" transform="translate(330 35)">
+      <ellipse cx="0" cy="0" rx="18" ry="13" fill="#29b6f6"/>
+      <circle cx="-14" cy="-7" r="9" fill="#29b6f6"/>
+      <path d="M-22 -8 L-31 -5 L-22 -3Z" fill="#ffa726"/>
+      <circle cx="-16" cy="-9" r="1.8" fill="#222"/>
+      <path d="M14 -2 L28 -8 L26 2Z" fill="#0288d1"/>
+      <path d="M-4 -2 Q4 -16 12 -4 Q4 4 -4 -2Z" fill="#0288d1"/>
+      <path d="M-4 12 V18 M4 12 V18" stroke="#ffa726" stroke-width="2"/>
+    </g>
+
+    <!-- ladybug (on leaf, bottom left) -->
+    <g transform="translate(150 232)">
+      <ellipse cx="0" cy="0" rx="12" ry="9" fill="#e53935"/>
+      <path d="M0 -9 V9" stroke="#222" stroke-width="1.5"/>
+      <circle cx="-5" cy="-2" r="2" fill="#222"/>
+      <circle cx="5" cy="-2" r="2" fill="#222"/>
+      <circle cx="-5" cy="4" r="1.6" fill="#222"/>
+      <circle cx="5" cy="4" r="1.6" fill="#222"/>
+      <circle cx="0" cy="-10" r="5" fill="#222"/>
+    </g>
   </svg>
 </body>
 </html>
