@@ -9,6 +9,7 @@
       margin: 0;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-family: system-ui, -apple-system, sans-serif;
@@ -18,13 +19,39 @@
     h1 {
       font-size: 3rem;
       text-align: center;
+      margin: 0 0 1rem;
       padding: 1rem 2rem;
       background: rgba(255, 255, 255, 0.85);
       border-radius: 12px;
     }
+    svg { width: min(60vw, 320px); height: auto; }
   </style>
 </head>
 <body>
   <h1>Hello Singapore 🇸🇬</h1>
+
+  <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-label="A flower">
+    <!-- stem -->
+    <path d="M100 120 C95 170 105 210 100 255" stroke="#2e7d32" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- leaves -->
+    <path d="M100 205 C70 195 55 175 50 160 C80 160 98 178 100 205Z" fill="#43a047"/>
+    <path d="M101 180 C130 172 146 152 150 138 C122 138 103 156 101 180Z" fill="#66bb6a"/>
+    <!-- petals -->
+    <g transform="translate(100 80)" fill="#ff80ab" stroke="#f06292" stroke-width="1.5">
+      <ellipse cx="0" cy="-34" rx="16" ry="30"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(315)"/>
+    </g>
+    <!-- center -->
+    <circle cx="100" cy="80" r="20" fill="#ffca28" stroke="#f9a825" stroke-width="2"/>
+    <circle cx="94" cy="75" r="2.5" fill="#f9a825"/>
+    <circle cx="105" cy="78" r="2.5" fill="#f9a825"/>
+    <circle cx="98" cy="87" r="2.5" fill="#f9a825"/>
+  </svg>
 </body>
 </html>
