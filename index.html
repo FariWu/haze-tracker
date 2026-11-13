@@ -2,93 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello Singapore</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #ef3340 0%, #ffffff 100%);
-      color: #222;
-    }
-    h1 {
-      font-size: 3rem;
-      text-align: center;
-      margin: 0 0 1rem;
-      padding: 1rem 2rem;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 12px;
-    }
-    svg { width: min(95vw, 700px); height: auto; }
-
-    /* The cat runs back and forth across the scene while hopping. */
-    .cat-run { animation: run 8s linear infinite; }
-    .cat-hop { animation: hop 0.5s ease-in-out infinite; }
-    @keyframes run {
-      0%   { transform: translateX(0); }
-      50%  { transform: translateX(460px); }
-      100% { transform: translateX(0); }
-    }
-    @keyframes hop {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-50px); }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Haze Tracker SG</title>
+  <meta name="description" content="Live 1-hour and 24-hour PSI for Singapore regions, with threshold alerts.">
+  <meta name="theme-color" content="#14263f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Haze SG">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Hello Singapore 🇸🇬</h1>
+  <header class="top">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="" width="40" height="40">
+      <div>
+        <h1>Haze Tracker SG</h1>
+        <p id="updated" class="muted">Loading…</p>
+      </div>
+    </div>
+    <button id="refresh" class="icon-btn" type="button" aria-label="Refresh now">⟳</button>
+  </header>
 
-  <svg viewBox="0 0 600 270" xmlns="http://www.w3.org/2000/svg" aria-label="A cat jumping around a flower">
-    <!-- grass -->
-    <path d="M0 250 Q150 235 300 248 T600 245 V270 H0Z" fill="#66bb6a"/>
+  <main>
+    <p id="banner" class="banner" role="status" hidden></p>
 
-    <!-- flower -->
-    <g transform="translate(300 0)">
-      <path d="M0 120 C-5 170 5 210 0 250" stroke="#2e7d32" stroke-width="6" fill="none" stroke-linecap="round"/>
-      <path d="M0 205 C-30 195 -45 175 -50 160 C-20 160 -2 178 0 205Z" fill="#43a047"/>
-      <path d="M1 180 C30 172 46 152 50 138 C22 138 3 156 1 180Z" fill="#66bb6a"/>
-      <g transform="translate(0 80)" fill="#ff80ab" stroke="#f06292" stroke-width="1.5">
-        <ellipse cx="0" cy="-34" rx="16" ry="30"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(45)"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(90)"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(135)"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(225)"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(270)"/>
-        <ellipse cx="0" cy="-34" rx="16" ry="30" transform="rotate(315)"/>
-      </g>
-      <circle cx="0" cy="80" r="20" fill="#ffca28" stroke="#f9a825" stroke-width="2"/>
-      <circle cx="-6" cy="75" r="2.5" fill="#f9a825"/>
-      <circle cx="5" cy="78" r="2.5" fill="#f9a825"/>
-      <circle cx="-2" cy="87" r="2.5" fill="#f9a825"/>
-    </g>
+    <section aria-labelledby="regions-h">
+      <h2 id="regions-h" class="section-title">Regions</h2>
+      <div id="regions" class="grid" aria-live="polite"></div>
+      <p class="legend" aria-label="PSI bands">
+        <span style="--c:#2e9e4f">0–50 Good</span>
+        <span style="--c:#2f7fd1">51–100 Moderate</span>
+        <span style="--c:#f2c200">101–200 Unhealthy</span>
+        <span style="--c:#ef7d00">201–300 Very Unhealthy</span>
+        <span style="--c:#c62828">301+ Hazardous</span>
+      </p>
+    </section>
 
-    <!-- cat: outer group runs left/right, inner group hops up/down -->
-    <g class="cat-run">
-      <g class="cat-hop">
-        <g transform="translate(70 252)">
-          <path d="M18 -6 C48 -6 50 -40 36 -48" stroke="#ff9800" stroke-width="7" fill="none" stroke-linecap="round"/>
-          <ellipse cx="0" cy="-24" rx="20" ry="24" fill="#ffa726"/>
-          <ellipse cx="0" cy="-14" rx="11" ry="15" fill="#ffe0b2"/>
-          <ellipse cx="-9" cy="-2" rx="7" ry="4" fill="#ffa726"/>
-          <ellipse cx="9" cy="-2" rx="7" ry="4" fill="#ffa726"/>
-          <path d="M-15 -62 L-13 -80 L-2 -68Z M15 -62 L13 -80 L2 -68Z" fill="#ffa726"/>
-          <path d="M-12 -68 L-11 -75 L-6 -70Z M12 -68 L11 -75 L6 -70Z" fill="#f48fb1"/>
-          <circle cx="0" cy="-58" r="17" fill="#ffa726"/>
-          <ellipse cx="-6" cy="-60" rx="2.5" ry="3.5" fill="#222"/>
-          <ellipse cx="6" cy="-60" rx="2.5" ry="3.5" fill="#222"/>
-          <path d="M-2 -54 L2 -54 L0 -51Z" fill="#e91e63"/>
-          <path d="M0 -51 Q-3 -47 -6 -49 M0 -51 Q3 -47 6 -49" stroke="#222" stroke-width="1" fill="none"/>
-          <path d="M-10 -53 L-26 -56 M-10 -50 L-26 -49 M10 -53 L26 -56 M10 -50 L26 -49" stroke="#555" stroke-width="1"/>
-          <path d="M-8 -72 V-66 M0 -74 V-68 M8 -72 V-66" stroke="#e65100" stroke-width="2" stroke-linecap="round"/>
-        </g>
-      </g>
-    </g>
-  </svg>
+    <section class="panel" aria-labelledby="alerts-h">
+      <h2 id="alerts-h" class="section-title">Haze alert</h2>
+      <form id="settings" autocomplete="off">
+        <label>Region
+          <select id="region">
+            <option value="central">Central</option>
+            <option value="north">North</option>
+            <option value="south">South</option>
+            <option value="east">East</option>
+            <option value="west">West</option>
+          </select>
+        </label>
+        <label>Reading to watch
+          <select id="metric">
+            <option value="psi24">24-hour PSI</option>
+            <option value="psi1">1-hour PSI (estimated)</option>
+          </select>
+        </label>
+        <label>Notify me when PSI reaches
+          <input id="threshold" type="number" inputmode="numeric" min="1" max="500" step="1" value="100">
+          <span id="threshold-band" class="band-hint"></span>
+        </label>
+        <label class="check">
+          <input id="enabled" type="checkbox" checked>
+          <span>Alerts on</span>
+        </label>
+        <div class="row">
+          <button type="submit" class="primary">Save alert</button>
+          <button type="button" id="test" class="ghost">Send test</button>
+        </div>
+        <p id="status" class="status" role="status"></p>
+      </form>
+      <p class="note">
+        Alerts are checked every time the app refreshes while it is open. On Android Chrome,
+        an installed app may also be checked in the background. Notifications are not guaranteed
+        while the app is closed, and iPhones need the app added to the Home Screen (iOS 16.4+).
+      </p>
+    </section>
+
+    <section class="panel" id="install-panel" hidden>
+      <h2 class="section-title">Add to Home Screen</h2>
+      <p id="install-text" class="note"></p>
+      <button type="button" id="install" class="primary" hidden>Install app</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Data: National Environment Agency via <a href="https://data.gov.sg" target="_blank" rel="noopener">data.gov.sg</a>
+      (Singapore Open Data Licence). The 24-hour PSI is NEA's official figure. NEA does not publish a
+      1-hour PSI, so it is estimated here from the 1-hour PM2.5 reading using the PSI PM2.5
+      breakpoints.
+    </p>
+  </footer>
+
+  <script src="psi.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

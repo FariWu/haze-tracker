@@ -1,0 +1,147 @@
+:root {
+  --bg: #0f1b2e;
+  --panel: #182843;
+  --panel-2: #1f3354;
+  --text: #eef3fa;
+  --muted: #9fb0c8;
+  --accent: #ffb84d;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 8px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand img { border-radius: 10px; }
+h1 { font-size: 1.2rem; margin: 0; }
+.muted { margin: 2px 0 0; color: var(--muted); font-size: 0.8rem; }
+
+.icon-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+.icon-btn.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+main, footer { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+main { padding-bottom: 8px; }
+
+.section-title { font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; }
+
+.banner {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #4a2f1a;
+  color: #ffd9a8;
+  font-size: 0.9rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 14px;
+  border-top: 4px solid var(--c, #8a93a0);
+}
+.card h3 { margin: 0 0 10px; font-size: 1rem; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat {
+  background: var(--panel-2);
+  border-radius: 12px;
+  padding: 10px;
+}
+.stat .label { display: block; font-size: 0.7rem; color: var(--muted); }
+.stat .value { display: block; font-size: 2rem; font-weight: 700; line-height: 1.15; margin: 2px 0 6px; }
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--c);
+  color: var(--t);
+}
+.pm { display: block; margin-top: 6px; font-size: 0.7rem; color: var(--muted); }
+.card.watching { outline: 2px solid var(--accent); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 12px 0 0; font-size: 0.72rem; color: var(--muted); }
+.legend span::before {
+  content: "";
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--c);
+  margin-right: 5px;
+}
+
+.panel { background: var(--panel); border-radius: var(--radius); padding: 4px 16px 16px; margin-top: 20px; }
+.panel .section-title { margin-top: 14px; }
+
+form { display: grid; gap: 12px; }
+label { display: grid; gap: 6px; font-size: 0.9rem; }
+select, input[type="number"] {
+  width: 100%;
+  font: inherit;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #34507d;
+  background: var(--bg);
+  color: var(--text);
+}
+.band-hint { font-size: 0.8rem; color: var(--muted); }
+label.check { display: flex; align-items: center; gap: 10px; }
+label.check input { width: 22px; height: 22px; accent-color: var(--accent); }
+
+.row { display: flex; gap: 10px; }
+button { font: inherit; cursor: pointer; }
+.primary, .ghost {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 0;
+}
+.primary { background: var(--accent); color: #1b1b1b; }
+.ghost { background: var(--panel-2); color: var(--text); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+.status { min-height: 1.2em; margin: 0; font-size: 0.85rem; color: var(--accent); }
+.note { font-size: 0.78rem; color: var(--muted); line-height: 1.45; }
+
+footer { padding-bottom: 28px; }
+footer p { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+footer a { color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn.spin { animation: none; }
+}
